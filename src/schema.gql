@@ -3,6 +3,201 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input BaseReservationInput {
+  bookedPlace: Float!
+  date: DateTime!
+  user: ObjectId!
+  workout: ObjectId!
+}
+
+input BaseTrainerInput {
+  address: String
+  age: String!
+  avatar: String
+  firstName: String!
+  height: String
+  lastName: String!
+  phone: String!
+  registrationDate: DateTime
+  specialization: String
+  weight: String
+}
+
+input BaseUserInput {
+  address: String!
+  age: String!
+  avatar: String
+  firstName: String!
+  lastName: String!
+  password: String!
+  phone: String!
+}
+
+input BaseWorkoutInput {
+  freeSpaces: Float! = 7
+  level: String!
+  location: String!
+  name: String! = "Pilates"
+  reservedPlaces: ObjectId!
+  tags: [String!]! = ["yoga", "meditation", "mental health", "training", "workout"]
+  trainer: ObjectId!
+  workoutDate: String!
+  workoutTime: String!
+}
+
+input CreateTrainerInput {
+  address: String
+  age: String!
+  avatar: String
+  email: String!
+  firstName: String!
+  height: String
+  lastName: String!
+  phone: String!
+  registrationDate: DateTime
+  specialization: String
+  weight: String
+}
+
+input CreateUserInput {
+  address: String!
+  age: String!
+  avatar: String
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  phone: String!
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
+type Mutation {
+  createReservation(reservation: BaseReservationInput!): Reservation!
+  createTrainer(trainer: CreateTrainerInput!): Trainer!
+  createUser(user: CreateUserInput!): String!
+  createWorkout(workout: BaseWorkoutInput!): Workout!
+  deleteReservation(_id: String!): Reservation!
+  deleteTrainer(_id: String!): Trainer!
+  deleteUser(_id: String!): User!
+  deleteWorkout(_id: String!): Workout!
+  login(email: String!, password: String!): String!
+  updateReservation(_id: String!, reservation: BaseReservationInput!): Reservation!
+  updateTrainer(_id: String!, trainer: BaseTrainerInput!): Trainer!
+  updateUser(_id: String!, user: BaseUserInput!): User!
+  updateWorkout(_id: String!, workout: BaseWorkoutInput!): Workout!
+}
+
+"""Mongo object id scalar type"""
+scalar ObjectId
+
+type PaginatedReservationResponse {
+  items: [Reservation!]!
+  page: Float!
+  totalItems: Float!
+  totalPages: Float!
+}
+
+type PaginatedTrainerResponse {
+  items: [Trainer!]!
+  page: Float!
+  totalItems: Float!
+  totalPages: Float!
+}
+
+type PaginatedUserResponse {
+  items: [User!]!
+  page: Float!
+  totalItems: Float!
+  totalPages: Float!
+}
+
+type PaginatedWorkoutResponse {
+  items: [Workout!]!
+  page: Float!
+  totalItems: Float!
+  totalPages: Float!
+}
+
 type Query {
-  helloWorld: String!
+  currentUser: User!
+  reservation(_id: String!): Reservation!
+  reservations(limit: Int = 20, page: Int! = 1): PaginatedReservationResponse!
+  reservationsByWorkout(workoutId: String!): [Reservation!]!
+  searchWorkoutsByDate(workoutDate: String!): [Workout!]!
+  searchWorkoutsByDateAndTime(workoutDate: String!, workoutTime: String!): [Workout!]!
+  trainer(_id: String!): Trainer!
+  trainerCount: Int!
+  trainers(limit: Int = 20, page: Int! = 1): PaginatedTrainerResponse!
+  user(_id: String!): User!
+  users(limit: Int = 20, page: Int! = 1): PaginatedUserResponse!
+  usersCount: Int!
+  workout(_id: String!): Workout!
+  workouts(limit: Int = 20, page: Int! = 1): PaginatedWorkoutResponse!
+}
+
+type Reservation {
+  _id: ObjectId!
+  bookedPlace: Float!
+  createdAt: DateTime!
+  date: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  workout: Workout!
+}
+
+type Trainer {
+  _id: ObjectId!
+  address: String!
+  age: String!
+  avatar: String!
+  createdAt: DateTime!
+  email: String!
+  firstName: String!
+  height: String!
+  lastName: String!
+  phone: String!
+  registrationDate: DateTime!
+  specialization: String!
+  updatedAt: DateTime!
+  weight: String!
+}
+
+type User {
+  _id: ObjectId!
+  address: String!
+  age: String!
+  avatar: String
+  createdAt: DateTime!
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+  phone: String!
+  roles: [UserRole!]!
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  ADMIN
+  SUPER_ADMIN
+  USER
+}
+
+type Workout {
+  _id: ObjectId!
+  createdAt: DateTime!
+  freeSpaces: Float!
+  level: String!
+  location: String!
+  name: String!
+  reservedPlaces: Reservation!
+  tags: [String!]!
+  trainer: Trainer!
+  updatedAt: DateTime!
+  workoutDate: String!
+  workoutTime: String!
 }
